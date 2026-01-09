@@ -11,7 +11,7 @@ spec:
     http:
       paths:
       {{- range .Values.services }}
-      - path: /{{ .name == "home" ? "" : .name }} # لو home خلي المسار / بس
+      - path: /{{ if ne .name "home" }}{{ .name }}{{ end }} 
         pathType: Prefix
         backend:
           service:
