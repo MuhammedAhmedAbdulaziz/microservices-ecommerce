@@ -1,0 +1,73 @@
+# Kubernetes API version and the type of resource
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # Unique name for this deployment
+  name: services-deploy
+  # Logical isolation; keeping production resources separate from others
+  namespace: ecommerce-prod 
+spec:
+  # High Availability: Maintain 2 running instances of this pod at all times
+  replicas: 2
+  # Strategy to identify which Pods belong to this Deployment
+  selector:
+    matchLabels:
+      app: services
+  # Blueprint for the Pods that will be created
+  template:
+    metadata:
+      labels:
+        # These labels must match the selector above
+        app: services
+    spec:
+      containers:
+      - name: services-app
+        # Path to the custom Docker image hosted on Docker Hub
+        image: azoooz/services-service:latest
+        ports:
+          # The port the container listens on inside the Pod
+        - containerPort: 80
+
+        # Resource Management: Ensures fair CPU/RAM distribution among services
+        resources:
+          # Minimum resources guaranteed for this container
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          # Maximum resources this container is allowed to consume
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+
+        # Readiness Probe: Checks if the app is ready to serve traffic
+        # If this fails, Kubernetes stops sending traffic to this Pod via the Service
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5  # Wait 5s after startup before first check
+          periodSeconds: 5        # Check every 5s
+
+        # Liveness Probe: Checks if the application has crashed or deadlocked
+        # If this fails, Kubernetes kills and restarts the container (Self-Healing)
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15 # Allow app time to initialize before checks
+          periodSeconds: 20       # Check every 20s
+---
+# Service Resource: Acts as a stable internal Load Balancer
+apiVersion: v1
+kind: Service
+metadata:
+  name: services-svc
+  namespace: ecommerce-prod 
+spec:
+  # Route traffic to Pods with the label 'app: services'
+  selector:
+    app: services
+  ports:
+    # 'port' is the internal cluster port; 'targetPort' is the container port
+    - port: 80
+      targetPort: 80

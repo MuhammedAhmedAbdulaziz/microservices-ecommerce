@@ -1,0 +1,15 @@
+namespace: ecommerce-prod
+
+image:
+  repository: azoooz
+  tag: latest
+
+services:
+  - name: home
+    replicas: 2
+  - name: about
+    replicas: 1
+  - name: contact
+    replicas: 1
+  - name: services
+    replicas: 1
