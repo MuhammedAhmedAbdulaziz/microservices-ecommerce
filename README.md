@@ -1,5 +1,3 @@
-
-```markdown
 # 🚀 GitOps-Driven Microservices E-Commerce Platform
 
 > A production-grade **Microservices Architecture** orchestrated via **Kubernetes**, automated with **Jenkins**, and managed declaratively using **ArgoCD (GitOps)**.
