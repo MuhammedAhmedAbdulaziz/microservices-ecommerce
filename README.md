@@ -1,47 +1,3 @@
-# 🚀 GitOps-Driven Microservices E-Commerce Platform
-
-> A production-grade **Microservices Architecture** orchestrated via **Kubernetes**, automated with **Jenkins**, and managed declaratively using **ArgoCD (GitOps)**.
-
-## 🏗️ Architectural Workflow
-
-This diagram illustrates the **Full GitOps Cycle**: from a code commit to a live update in the cluster, with zero manual intervention.
-
-```mermaid
-graph LR
-    %% Styles
-    classDef dev fill:#2d2d2d,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef ci fill:#D33833,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef reg fill:#0db7ed,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef gitops fill:#ef7b4d,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef k8s fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff;
-
-    %% Nodes
-    Developer[👨‍💻 Developer Push]:::dev
-    GitHub[🐱 GitHub Repo]:::dev
-    Jenkins[🤖 Jenkins CI]:::ci
-    DockerHub[🐳 Docker Hub]:::reg
-    ArgoCD[🐙 ArgoCD Controller]:::gitops
-    K8s(☸️ Kubernetes Cluster):::k8s
-
-    %% Flow
-    Developer -->|1. git push| GitHub
-    GitHub -->|2. Webhook Trigger| Jenkins
-    
-    subgraph "Smart CI Pipeline"
-        Jenkins -->|3. Detect Changeset| Jenkins
-        Jenkins -->|4. Build & Test| Jenkins
-        Jenkins -->|5. Push Image :TAG| DockerHub
-    end
-
-    Jenkins -->|6. Update Helm values.yaml| GitHub
-    
-    subgraph "Continuous Delivery (CD)"
-        ArgoCD -->|7. Watch Repo| GitHub
-        ArgoCD -->|8. Detect Drift| ArgoCD
-        ArgoCD -->|9. Sync/Apply| K8s
-    end
-
-    لنسخ محتوى الـ Canvas بصيغة Markdown، يمكنك ببساطة نسخ الكود التالي ولصقه في ملف `README.md` الخاص بك:
 
 ```markdown
 # 🚀 GitOps-Driven Microservices E-Commerce Platform
