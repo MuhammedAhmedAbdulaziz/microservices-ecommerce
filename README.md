@@ -2,46 +2,43 @@
 
 > A production-grade **Microservices Architecture** orchestrated via **Kubernetes**, automated with **Jenkins**, and managed declaratively using **ArgoCD (GitOps)**.
 
+---
+
 ## 🏗️ Architectural Workflow
 
 This diagram illustrates the **Full GitOps Cycle**: from a code commit to a live update in the cluster, with zero manual intervention.
 
 ```mermaid
 graph LR
-    %% Styles
-    classDef dev fill:#2d2d2d,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef ci fill:#D33833,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef reg fill:#0db7ed,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef gitops fill:#ef7b4d,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef k8s fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff;
-
-    %% Nodes
-    Developer[👨‍💻 Developer Push]:::dev
-    GitHub[🐱 GitHub Repo]:::dev
-    Jenkins[🤖 Jenkins CI]:::ci
-    DockerHub[🐳 Docker Hub]:::reg
-    ArgoCD[🐙 ArgoCD Controller]:::gitops
-    K8s(☸️ Kubernetes Cluster):::k8s
-
-    %% Flow
-    Developer -->|1. git push| GitHub
-    GitHub -->|2. Webhook Trigger| Jenkins
+    %% Main Flow
+    Dev[👨‍💻 Developer] -->|1. git push| GH[🐱 GitHub Repo]
+    GH -->|2. Webhook Trigger| Jenkins[🤖 Jenkins CI]
     
-    subgraph "Smart CI Pipeline"
+    subgraph CI_Pipeline [Smart CI Pipeline]
+        direction TB
         Jenkins -->|3. Detect Changeset| Jenkins
         Jenkins -->|4. Build & Test| Jenkins
-        Jenkins -->|5. Push Image :TAG| DockerHub
+        Jenkins -->|5. Push Image| Hub[🐳 Docker Hub]
     end
 
-    Jenkins -->|6. Update Helm values.yaml| GitHub
+    Jenkins -->|6. Update Helm values.yaml| GH
     
-    subgraph "Continuous Delivery (CD)"
-        ArgoCD -->|7. Watch Repo| GitHub
-        ArgoCD -->|8. Detect Drift| ArgoCD
-        ArgoCD -->|9. Sync/Apply| K8s
+    subgraph CD_GitOps [Continuous Delivery]
+        direction TB
+        Argo[🐙 ArgoCD Controller] -->|7. Watch Repo| GH
+        Argo -->|8. Detect Drift| Argo
+        Argo -->|9. Sync/Apply| K8s(☸️ Kubernetes Cluster)
     end
 
-```
+    %% Styling for GitHub Compatibility
+    style CI_Pipeline fill:#fff5f5,stroke:#D33833,stroke-width:2px,stroke-dasharray: 5 5
+    style CD_GitOps fill:#fff9f5,stroke:#ef7b4d,stroke-width:2px,stroke-dasharray: 5 5
+    style Jenkins fill:#D33833,color:#fff
+    style Argo fill:#ef7b4d,color:#fff
+    style K8s fill:#326ce5,color:#fff
+    style Hub fill:#0db7ed,color:#fff
+    style GH fill:#2d2d2d,color:#fff
+    style Dev fill:#2d2d2d,color:#fff
 
 ## 🌟 Key Features
 
