@@ -1,0 +1,40 @@
+# This specifies the API version for the ArgoCD Application Custom Resource (CRD)
+apiVersion: argoproj.io/v1alpha1
+# 'Application' is a Custom Resource that acts as a supervisor for your microservices
+kind: Application
+metadata:
+  # The unique name for this application in the ArgoCD dashboard
+  name: ecommerce-prod-app
+  # ArgoCD Controller lives in this namespace; it must be 'argocd' to be recognized by the manager
+  namespace: argocd
+spec:
+  # Logical project grouping within ArgoCD (default is the standard)
+  project: default
+  
+  # --- SOURCE: Where the 'Supervisor' looks for instructions ---
+  source:
+    # The URL of your Git repository (The Source of Truth)
+    repoURL: https://github.com/MuhammedAhmedAbdulaziz/microservices-ecommerce.git
+    # The specific branch ArgoCD will monitor for changes
+    targetRevision: main
+    # Crucial: The specific folder containing the Kubernetes manifests/Helm chart. 
+    # ArgoCD ignores the application code (HTML/CSS) and focuses only on this path.
+    path: ecommerce-chart
+  
+  # --- DESTINATION: Where the 'Supervisor' deploys the resources ---
+  destination:
+    # The URL of the Kubernetes API server (local cluster in this case)
+    server: https://kubernetes.default.svc
+    # The target namespace where your microservices will be created
+    namespace: ecommerce-prod
+
+  # --- SYNC POLICY: How the 'Supervisor' maintains order ---
+  syncPolicy:
+    automated:
+      # Automatically delete resources in the cluster that are removed from Git
+      prune: true
+      # Automatically revert manual 'kubectl' changes to match what is defined in Git
+      selfHeal: true
+    syncOptions:
+      # Instructs ArgoCD to create the destination namespace if it doesn't already exist
+      - CreateNamespace=true
