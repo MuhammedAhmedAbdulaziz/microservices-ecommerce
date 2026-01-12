@@ -39,6 +39,7 @@ graph LR
     style Hub fill:#0db7ed,color:#fff
     style GH fill:#2d2d2d,color:#fff
     style Dev fill:#2d2d2d,color:#fff
+    
 ```
 ## 🌟 Key Features
 
